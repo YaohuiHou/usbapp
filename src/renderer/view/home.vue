@@ -137,12 +137,6 @@ export default {
     },
     // 启动usb监测
     openNodeUsb() {
-      console.log('usb')
-      var usb = require('usb')
-
-      usb.on('attach', function(device) {
-        console.log(device)
-      })
     },
     // 桌面
     openMenu(item) {

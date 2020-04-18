@@ -9,7 +9,7 @@
           <img src="~@/assets/home.png" alt />
         </button>
         <section id="current-folder"></section>
-        <button class="btn forward" id="back_up" @click="goto">
+        <button class="btn forward" id="back_up" @click="goto" title="备份">
           <img src="~@/assets/back.png" alt />
         </button>
         <button class="navBtn" id="forward" disabled @click="linkonBtn">
@@ -26,13 +26,13 @@
 <script>
 const { remote } = require("electron");
 const { Menu, MenuItem, Notification } = remote;
-
 import "../assets/css/app.css";
+var adb = require('android');
 const fs = require("fs");
 const fse = require("fs-extra");
 const path = require("path");
 const mineType = require("mime-types"); // 文件类型
-// const folderPath = "/Users/houyaohui/Desktop/images";
+// const folderPath = "/Users/houyaohui/Desktop/";
 
 // 文件管理
 const fileSystem = require("../../main/fileSystem.js");
@@ -56,12 +56,55 @@ export default {
   },
   methods: {
     nodemtp(){
-      // const mtp = require('node-mtp');
-      // console.log(mtp);
+      var process = require('child_process');
+
+      process.exec(`adb devices`, (error, res) => {
+        if (error) {
+          throw error;
+      }
+      console.log(res);
       
-      // mtp.attach()
-      // const list = mtp.getFileListing();
-      // console.log('Files:', list);
+      })
+    
+    //   var nrc = require('node-run-cmd');
+    //   var dataCallback = function(data) {
+    //     // useData(data);
+    //     console.log(data,'==--===')
+    //   };
+    //   var errorCallback = function(data) {
+    //   console.log(data);
+    // };
+    //   nrc.run('ls', { onData: dataCallback });
+      // nrc.run('adb devices').then(data=>{
+      //   console.log(data);
+        
+      // });
+    //   adb.firstDevice(function(deviceId){
+    //   if(deviceId) {
+    //     console.log(deviceId);
+    //     //there's a device attached, do cool stuff
+    //   } else {
+    //     console.log(deviceId);
+    //   }
+    // });
+      // adb({
+      //     cmd: ['devices']
+      // },function(result){
+      //     console.log(result)
+      // });
+      // adb.firstDevice(function(deviceId){
+      //   console.log(deviceId);
+        
+      //   if(deviceId) {
+      //     //there's a device attached, do cool stuff
+      //     console.log('ceshi',deviceId);
+          
+      //   } else {
+      //     //no device attached
+      //     console.log('12314');
+          
+      //   }
+      // });
     },
     main() {
       const folderPath1 = fileSystem.getUserHomeFolder();
