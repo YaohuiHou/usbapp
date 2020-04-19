@@ -347,8 +347,9 @@ function setFileItemRightkeyMenu(filePath) {
         label: '备份',
         click: (e) => {
           // Async with promises:
+          let files = filePath.split('/').slice(1)
           fse
-            .copy(filePath, fileSystem.getUserHomeFolder() + '/tmp/' + filePath)
+            .copy(filePath, 'C:/tmp/' + files.join('/'))
             .then(() => {
               showHint('提示', '备份成功！')
             })

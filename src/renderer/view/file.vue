@@ -27,7 +27,7 @@
 const { remote } = require("electron");
 const { Menu, MenuItem, Notification } = remote;
 import "../assets/css/app.css";
-var adb = require('android');
+// var adb = require('android');
 const fs = require("fs");
 const fse = require("fs-extra");
 const path = require("path");
@@ -52,7 +52,6 @@ export default {
   },
   mounted() {
     this.main();
-    this.nodemtp()
   },
   methods: {
     nodemtp(){
@@ -107,7 +106,7 @@ export default {
       // });
     },
     main() {
-      const folderPath1 = fileSystem.getUserHomeFolder();
+      const folderPath1 = 'G:/';
 
       userInterface.default.setBtnHandler();
       userInterface.default.loadDirectory(folderPath1);
@@ -123,7 +122,7 @@ export default {
     },
     goto() {
       const folderPath1 = fileSystem.getUserHomeFolder();
-      this.link = folderPath1 + "/tmp" + folderPath1;
+      this.link = "C:/tmp" + folderPath1;
       // let link = "/Users/houyaohui/tmp/Users/houyaohui";
       userInterface.default.setBtnHandler(1);
       userInterface.default.loadDirectory(this.link);
