@@ -2,10 +2,10 @@
   <div class="file-view">
     <header id="toolBar">
       <section class="navBtnContainer">
-        <button class="navBtn" id="backward" disabled @click="linkonBtn">
+        <button class="btn" id="backward" disabled @click="linkonBtnBack">
           <img src="~@/assets/backward.png" alt />
         </button>
-        <button class="navBtn" id="home" @click="linkon">
+        <button class="btn" id="home" @click="linkon">
           <img src="~@/assets/home.png" alt />
         </button>
         <section id="current-folder"></section>
@@ -20,7 +20,12 @@
     </header>
     <!-- 显示文件主区域 -->
     <h2 class="title" v-if="link">备份区</h2>
-    <section id="main-area" class="main-area"></section>
+    <section id="main-area" class="main-area">
+      <div v-for="(item,i) in list" :key="i" class="fileItem" @dblclick="gotoFiles(item)">
+        <img src="~@/assets/directory.png" alt="" class="fileIcon">
+        <div class="fileName">{{item}}</div>
+      </div>
+    </section>
   </div>
 </template>
 <script>
@@ -47,69 +52,32 @@ export default {
       imgArr: [],
       videoArr: [],
       tag2: false,
-      link: ""
+      link: "",
+      folderPath:'',
+      list:[]
     };
   },
   mounted() {
-    this.main();
+    this.init()
+    console.log(this);
+    
   },
   methods: {
-    nodemtp(){
-      var process = require('child_process');
-
-      process.exec(`adb devices`, (error, res) => {
-        if (error) {
-          throw error;
-      }
-      console.log(res);
-      
+    init(){
+      let pathArr = ['C','D','F','E','G','/Users/houyaohui/Desktop']
+      pathArr.map(item=>{
+        userInterface.default.testFile(item+'/',(f)=>{
+          if(f){
+            this.list.push(item)
+          }
+        })
       })
-    
-    //   var nrc = require('node-run-cmd');
-    //   var dataCallback = function(data) {
-    //     // useData(data);
-    //     console.log(data,'==--===')
-    //   };
-    //   var errorCallback = function(data) {
-    //   console.log(data);
-    // };
-    //   nrc.run('ls', { onData: dataCallback });
-      // nrc.run('adb devices').then(data=>{
-      //   console.log(data);
-        
-      // });
-    //   adb.firstDevice(function(deviceId){
-    //   if(deviceId) {
-    //     console.log(deviceId);
-    //     //there's a device attached, do cool stuff
-    //   } else {
-    //     console.log(deviceId);
-    //   }
-    // });
-      // adb({
-      //     cmd: ['devices']
-      // },function(result){
-      //     console.log(result)
-      // });
-      // adb.firstDevice(function(deviceId){
-      //   console.log(deviceId);
-        
-      //   if(deviceId) {
-      //     //there's a device attached, do cool stuff
-      //     console.log('ceshi',deviceId);
-          
-      //   } else {
-      //     //no device attached
-      //     console.log('12314');
-          
-      //   }
-      // });
     },
     main() {
-      const folderPath1 = 'G:/';
-
+      // const folderPath1 = 'G:/';
+      // const folderPath1 = "/Users/houyaohui/Desktop/"
       userInterface.default.setBtnHandler();
-      userInterface.default.loadDirectory(folderPath1);
+      userInterface.default.loadDirectory(this.folderPath);
       userInterface.default.bindSearchField(event => {
         const query = event.target.value;
 
@@ -120,6 +88,12 @@ export default {
         }
       });
     },
+    gotoFiles(link){
+      this.folderPath = link
+      userInterface.default.updateFolderPath(link)
+      this.main()
+      userInterface.default.dblclickFun(link)
+    },
     goto() {
       const folderPath1 = fileSystem.getUserHomeFolder();
       this.link = "C:/tmp" + folderPath1;
@@ -128,8 +102,15 @@ export default {
       userInterface.default.loadDirectory(this.link);
     },
     linkon() {
+      userInterface.default.clearView()
       this.link = "";
-      userInterface.default.setBtnHandler();
+      this.folderPath = ""
+      this.init()
+    },
+    linkonBtnBack(){
+      userInterface.default.btnBack(()=>{
+        this.init()
+      })
     },
     linkonBtn() {
       let link = document.getElementById("current-folder").innerText;
@@ -145,15 +126,6 @@ export default {
 
       myNotification.show();
     },
-    changeIndex(index) {
-      if (index == 3) {
-        return;
-      }
-      this.$router.push({ path: "/home", query: { id: index } });
-    },
-    open(link) {
-      this.$electron.shell.openItem(link);
-    }
   }
 };
 </script>

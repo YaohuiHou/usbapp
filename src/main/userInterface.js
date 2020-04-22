@@ -7,8 +7,10 @@ const search = require('./search.js')
 const EventEmitter = require('events')
 const fileSystem = require('./fileSystem.js')
 const mineType = require('mime-types')
+let pageLink = ''
 let pageStack = [] //页面栈
-pageStack.push(fileSystem.getUserHomeFolder()) //最底层默认为home
+// fileSystem.getUserHomeFolder()
+pageStack.push('') //最底层默认为home
 let pageIndex = 0 //页面索引
 let btnStateChangeEvent = new EventEmitter()
 // 能否前进后退的标记
@@ -36,7 +38,14 @@ Object.defineProperty(btnState, 'canMoveBackward', {
     btnStateChangeEvent.emit('btnStateChange')
   },
 })
+function dblclickFun(file) {
+  pageStack.splice(pageIndex + 1, pageStack.length - pageIndex - 1)
+  pageStack.push(file)
+  pageIndex = pageStack.length - 1
+  btnState.canMoveBackward = true
 
+  pageLink = file
+}
 // 显示文件、文件夹
 function displayFile(file, files) {
   const mainArea = document.getElementById('main-area')
@@ -152,17 +161,26 @@ function clearView() {
     firstChild = mainArea.firstChild
   }
 }
+function testFile(folderPath,ck) {
+  fileSystem.getFilesInFolder(folderPath, (err, files) => {
+    // clearView()
+    if (err) {
+      return ck(false)
+    }else{
+      return ck(true)
+    }
+  })
+}
 
 // 加载文件夹
 function loadDirectory(folderPath) {
-  console.log(folderPath, '-=-=-=--')
-
   search.resetIndex()
   updateFolderPath(folderPath)
   fileSystem.getFilesInFolder(folderPath, (err, files) => {
     clearView()
     if (err) {
-      return alert('无法加载您的路径')
+      alert('无法加载您的路径')
+      return null
     }
     fileSystem.inspectAndDescribeFiles(folderPath, files, displayFiles)
   })
@@ -180,18 +198,31 @@ function setBtnHandler(n) {
     navBtns[i].addEventListener('click', btnHandler)
   }
 }
+function btnBack(cb){
+  pageIndex = pageIndex == 0 ? 0 : pageIndex - 1
+  if(pageStack[pageIndex] === ''){
+    clearView()
+    cb()
+  }else{
+    loadDirectory(pageStack[pageIndex])
+    btnState.canMoveForward = true
+    if (pageIndex <= 0) {
+      btnState.canMoveBackward = false
+    }
+  }
+}
 // 导航键监听
 function btnHandler(e) {
   let flag = e.currentTarget.getAttribute('id')
   switch (flag) {
-    case 'backward':
-      pageIndex = pageIndex == 0 ? 0 : pageIndex - 1
-      loadDirectory(pageStack[pageIndex])
-      btnState.canMoveForward = true
-      if (pageIndex <= 0) {
-        btnState.canMoveBackward = false
-      }
-      break
+    // case 'backward':
+    //   pageIndex = pageIndex == 0 ? 0 : pageIndex - 1
+    //   loadDirectory(pageStack[pageIndex])
+    //   btnState.canMoveForward = true
+    //   if (pageIndex <= 0) {
+    //     btnState.canMoveBackward = false
+    //   }
+    //   break
     case 'forward':
       loadDirectory(pageStack[++pageIndex])
       btnState.canMoveBackward = true
@@ -349,7 +380,7 @@ function setFileItemRightkeyMenu(filePath) {
           // Async with promises:
           let files = filePath.split('/').slice(1)
           fse
-            .copy(filePath, 'C:/tmp/' + files.join('/'))
+            .copy(filePath, `C:/tmp/${pageLink}/${files.join('/')}`)
             .then(() => {
               showHint('提示', '备份成功！')
             })
@@ -381,14 +412,15 @@ function setFileItemRightkeyMenu(filePath) {
     )
   }
 
-  menu.append(
-    new MenuItem({
-      label: '刷新',
-      click() {
-        loadDirectory(pageStack[pageIndex])
-      },
-    })
-  )
+  // menu.append(
+  //   new MenuItem({
+  //     label: '刷新',
+  //     click() {
+  //       // loadDirectory(pageStack[pageIndex])
+  //       btnBack(pageStack[pageIndex])
+  //     },
+  //   })
+  // )
   menu.popup({ window: remote.getCurrentWindow() })
 }
 
@@ -399,4 +431,9 @@ export default {
   bindSearchField,
   resetFileter,
   filterResults,
+  testFile,
+  clearView,
+  btnBack,
+  updateFolderPath,
+  dblclickFun
 }

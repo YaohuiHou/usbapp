@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+  
+</body>
+<script>
+  // 位置转换
+  function swap(arr,indexA,indexB){
+    [arr[indexA],arr[indexB]] = [arr[indexB],arr[indexA]]
+  }
+  // 冒泡排序
+  // 从左右到，依次比较，将最大值移至右侧
+
+  var arr = [2,1,8,3,5,9,0,12,4]
+
+  for (let i = 0; i < arr.length-1; i++) {
+    for (let j = 0; j < arr.length-1-i; j++) {
+      if(arr[j] > arr[j+1]){
+        // let m = arr[j]
+        // arr[j] = arr[j+1]
+        // arr[j+1] = m
+        swap(arr,j,j+1)
+      }
+    }
+  }
+  console.log(arr);
+
+  // 选择排序
+  // 将每个数同第一个作比较，如果小于就交互位置
+  var arr1 = [32,3,45,576,33,78,867,31,3,21,32]
+  for (let i = 0; i < arr1.length-1; i++) {
+    let m = i
+    for (let j = i+1; j < arr1.length; j++) {
+      if(arr1[m] > arr1[j]){
+        m = j
+      }
+    }
+    let me = arr1[i]
+    arr1[i] = arr1[m]
+    arr1[m] = me
+  }
+  console.log(arr1);
+
+  // 插入排序
+  // 取出下一个元素，在已排好序的队列中比较，找到比自己小的插入到他下一个位置
+
+  // var arr2 = [32,3,45,576,33,78,867,31,3,21,32];
+  // for (let i = 0; i < arr2.length; i++) {
+  //   for (let j = i+1; j > 0; j--) {
+      
+  //   }
+  // }
+  
+
+</script>
+</html>

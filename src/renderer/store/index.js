@@ -8,7 +8,15 @@ import modules from './modules'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules,
+  state: {
+    // 状态
+    type:false
+  },
+  mutations: {
+    changeType (state) {
+      state.type = !state.type
+    }
+  },
   plugins: [
     createPersistedState(),
     createSharedMutations()
