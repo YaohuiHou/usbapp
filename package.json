@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "android": "^0.0.8",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "electron-updater": "^4.2.5",
     "lunr": "^2.3.8",
     "nedb": "^1.8.0",
